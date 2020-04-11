@@ -6,10 +6,12 @@ import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import Home from "./components/home/home";
 import ProductDetails from "./components/products/product-details/product-details";
+import CreateProduct from "./components/products/product-create/product-create";
 import Profile from "./components/profile/profile";
 import Checkout from "./components/checkout/checkout";
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import productsService from "./service/productsService";
 
 const SHOPPING_CART_STORAGE_KEY = "shoppingCart";
 
@@ -25,13 +27,14 @@ class App extends React.Component {
         this.handleRemoveFromCart = this.handleRemoveFromCart.bind(this);
         this.handleResetCart = this.handleResetCart.bind(this);
         this.handleBuyCart = this.handleBuyCart.bind(this);
+        this.onToken = this.onToken.bind(this);
     }
 
     handleAddToCart(addToCartProduct) {
         console.log("handleAddToCart called with", addToCartProduct);
         let shoppingCart = this.state.shoppingCart;
         const existingItemIndex = shoppingCart.findIndex((cartItem) => {
-            return cartItem.product.idProizvod === addToCartProduct.idProizvod
+            return cartItem.product.id === addToCartProduct.id
         });
 
         if (existingItemIndex === -1) {
@@ -57,7 +60,7 @@ class App extends React.Component {
         console.log("handleRemoveFromCart called with", removeFromCartProduct);
         let shoppingCart = this.state.shoppingCart;
         const productInCartIndex = shoppingCart.findIndex((cartItem) => {
-            return cartItem.product.idProizvod === removeFromCartProduct.idProizvod
+            return cartItem.product.id === removeFromCartProduct.id
         });
 
         if (productInCartIndex !== -1) {
@@ -89,8 +92,28 @@ class App extends React.Component {
         }, () => {
             localStorage.removeItem(SHOPPING_CART_STORAGE_KEY);
             toast.success("The items have been purchased successfully");
-        })
+        });
     }
+
+    onToken(token) {
+        console.log(token)
+        const orderData = {
+            token: token.id,
+            productData: this.state.shoppingCart.map((cartItem) => {
+                return {
+                    productId: cartItem.product.id,
+                    amount: cartItem.amount
+                }
+            })
+        };
+        console.log(orderData);
+
+        productsService.createOrder(orderData)
+            .then(response => {
+                console.log(response);
+                this.handleBuyCart();
+            });
+    };
 
     render() {
         const routing = (
@@ -102,10 +125,12 @@ class App extends React.Component {
                         <Route path="/products" exact component={() => {
                             return <Products handleAddToCart={this.handleAddToCart}/>
                         }}/>
-                        <Route path="/products/:idProizvod" exact component={ProductDetails}/>
-                        <Route path="/users/:idKorisnik" exact component={Profile}/>
+                        <Route path="/products/:id" exact component={ProductDetails}/>
+                        <Route path="/products/create" exact component={CreateProduct}/>
+                        <Route path="/users/:id" exact component={Profile}/>
                         <Route path="/checkout/" exact component={() => {
                             return <Checkout shoppingCart={this.state.shoppingCart}
+                                             onToken={this.onToken}
                                              handleRemoveFromCart={this.handleRemoveFromCart}
                                              handleResetCart={this.handleResetCart}
                                              handleBuyCart={this.handleBuyCart}/>

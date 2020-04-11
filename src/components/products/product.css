@@ -1,0 +1,10 @@
+body{
+    color: gray;
+}
+img {
+    display: block !important;
+    width: 500px;
+    height: 250px;
+    object-fit: contain;
+    position: relative;
+}

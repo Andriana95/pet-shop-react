@@ -3,14 +3,31 @@ import './home.css';
 import productsService from "../../service/productsService";
 import {Link} from "react-router-dom";
 import ReactCurrencyFormatter from "react-currency-formatter";
+import {Pie} from "react-chartjs-2";
+import {Line} from 'react-chartjs-2';
 
 class Home extends React.Component {
-
+    chartData;
     constructor(props) {
         super(props);
         this.state = {
             recommendedProducts: []
         }
+        this.chartData = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+                {
+                    label: 'Products data',
+                    fill: false,
+                    lineTension: 0.1,
+                    backgroundColor: 'rgba(75,192,192,0.4)',
+                    borderColor: 'rgba(75,192,192,1)',
+                    pointBorderColor: 'rgba(75,192,192,1)',
+                    pointBackgroundColor: '#fff',
+                    data: [65, 59, 80, 81, 56, 55, 40]
+                }
+            ]
+        };
     }
 
     componentDidMount() {
@@ -32,20 +49,20 @@ class Home extends React.Component {
     render() {
         const productsCarouselItemsHTML = this.state.recommendedProducts.map((product, index) => {
             return (
-                <Link to={{pathname: `/products/${product.idProizvod}`}}
-                      key={product.idProizvod}
+                <Link to={{pathname: `/products/${product.id}`}}
+                      key={product.id}
                       className={'carousel-item img-fluid ' + (index === 0 ? 'active' : '')}>
-                    <img src={product.slikaUrl} className="d-block carousel-img img-fluid" alt="..."/>
+                    <img src={product.img} className="d-block carousel-img img-fluid" alt="..."/>
                     <div className="carousel-caption d-none d-md-block">
-                        <h5>{product.ime}</h5>
-                        <p><ReactCurrencyFormatter quantity={product.cena}/></p>
+                        <h5>{product.name}</h5>
+                        <p><ReactCurrencyFormatter quantity={product.price}/></p>
                     </div>
                 </Link>
             )
         });
 
         const carouselControlsHTML = this.state.recommendedProducts.map((product, index) => {
-            return <li key={product.idProizvod} className={index === 0 ? 'active' : ''}
+            return <li key={product.id} className={index === 0 ? 'active' : ''}
                        data-target="#carouselExampleIndicators" data-slide-to={index}/>
         });
 
@@ -61,7 +78,6 @@ class Home extends React.Component {
                         </div>
                     </div>
                 </div>
-
                 <div className="row no-gutters">
                     <div className="col-12">
                         <p className="h3">Recommended products</p>
@@ -84,6 +100,11 @@ class Home extends React.Component {
                                 <span className="sr-only">Next</span>
                             </a>
                         </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12">
+                        <Pie data={this.chartData}/>
                     </div>
                 </div>
             </div>

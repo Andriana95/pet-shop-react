@@ -9,7 +9,7 @@ class Header extends React.Component {
 
     render() {
         const loggedInUser = {
-            idKorisnik: 1
+            id: 1
         };
 
         return (
@@ -27,6 +27,9 @@ class Header extends React.Component {
                         </li>
                         <li className="nav-item">
                             <NavLink to={"/products"} exact className="nav-link" href="#">Products</NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <NavLink to={"/products/create"} exact className="nav-link">Create Product</NavLink>
                         </li>
                     </ul>
                     <ul className="navbar-nav">

@@ -1,5 +1,6 @@
 import React from 'react';
 import productsService from "../../../service/productsService";
+import ReactCurrencyFormatter from "react-currency-formatter";
 
 class ProductDetails extends React.Component {
 
@@ -12,7 +13,7 @@ class ProductDetails extends React.Component {
     }
 
     componentDidMount() {
-        const routeIdProizvod = this.props.match.params.idProizvod;
+        const routeIdProizvod = this.props.match.params.id;
         console.log("routeIdProizvod vo rutata", routeIdProizvod);
         this.getProduct(routeIdProizvod);
     }
@@ -35,10 +36,11 @@ class ProductDetails extends React.Component {
         const productHTML = product ? (
             <div className="col-4">
                 <div className="card">
-                    <img src={product.slikaUrl} className="card-img-top" alt="..."/>
+                    <img src={product.img} className="card-img-top" alt="..."/>
                     <div className="card-body">
-                        <h5 className="card-title">{product.ime}</h5>
-                        <p className="card-text">{product.opis.substring(0, 250)}</p>
+                        <h5 className="card-title">{product.name}</h5>
+                        <p className="card-text">{product.description.substring(0, 250)}</p>
+                        <td><ReactCurrencyFormatter quantity={product.price}/></td>
                     </div>
                 </div>
             </div>
